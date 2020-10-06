@@ -1,0 +1,14 @@
+[
+  {
+    "name": "name",
+    "description": "string",
+    "price": 0.0,
+    "tax": 0.0
+  },
+  {
+    "name": "name1",
+    "description": "string",
+    "price": 0.0,
+    "tax": 0.0
+  }
+]
