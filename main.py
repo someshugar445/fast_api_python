@@ -75,13 +75,60 @@ async def create_item(item: Item):
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
-    if record_not_found:
+    elif record_not_found:
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
     else:
         print("INFO': 'Product already exists")
     return new_record
+
+
+@app.put("/items/")
+async def update_record(item: Item):
+    new_record = item.dict()
+    with open('data.txt', 'r') as f:
+        data = f.read()
+        records = json.loads(data)
+    record_found = False
+    for r in records:
+        if r['name'] == new_record['name']:
+            old_record = r
+            record_found = True
+    if record_found:
+        records.remove(old_record)
+        records.append(new_record)
+    else:
+        records.append(new_record)
+    with open('data.txt', 'w') as f:
+        f.write(json.dumps(records, indent=2))
+    return records
+
+
+@app.delete("/items/")
+def delete_record(name):
+    with open('data.txt', 'r') as f:
+        data = f.read()
+        records = json.loads(data)
+    record_found = False
+    if name != "all":
+        for record in records:
+            if record['name'] == name:
+                record_found = True
+                name_record = record
+        if record_found:
+            records.remove(name_record)
+            with open('data.txt', 'w') as f:
+                f.write(json.dumps(records, indent=2))
+            return {'response': 'record has been deleted'}
+        else:
+            return {'INFO': 'name not found'}
+    else:
+        for record in records:
+            records.remove(record)
+        with open('data.txt', 'w') as f:
+            f.write(json.dumps(records, indent=2))
+        return {'response': 'All records has been deleted'}
 
 
 if __name__ == "__main__":
