@@ -54,8 +54,7 @@ async def create_item(item: Item):
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
-
-    if record_not_found:
+    elif record_not_found:
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
