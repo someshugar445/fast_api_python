@@ -6,6 +6,7 @@ import os
 from os.path import join, dirname, realpath
 from typing import Optional
 from pydantic import BaseModel
+from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
@@ -15,6 +16,24 @@ class Item(BaseModel):
     description: Optional[str] = None
     price: float
     tax: Optional[float] = None
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home():
+    return """
+    <html>
+        <h1>
+            <title>Fast api demo</title>
+        </h1>
+        <body>
+            <h1>Welcome to Python Fast api demo</h1>
+            <p>Click on below link to execute rest apis</p>
+            <p>
+             <a href="http://127.0.0.1:8000/docs">Click here</a>
+            </p>
+        </body>
+    </html>
+    """
 
 
 @app.get("/items/{name}")
@@ -49,12 +68,14 @@ async def create_item(item: Item):
     record_not_found = False
     for record in old_records:
         if record['name'] != new_record['name']:
+            print(record['name'])
+            print(new_record['name'])
             record_not_found = True
     if not old_records:
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
-    elif record_not_found:
+    if record_not_found:
         old_records.append(new_record)
         with open('data.txt', 'w') as f:
             f.write(json.dumps(old_records, indent=2))
